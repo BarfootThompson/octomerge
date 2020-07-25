@@ -1,0 +1,53 @@
+﻿name: "Build"
+on:
+  push:
+    tags:
+    - '*'
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+    - name: Get the tag
+      shell: powershell
+      id: get_tag
+      run: |
+        "::set-output name=TAG::$($env:GITHUB_REF.replace('refs/tags/',''))"
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+    - name: "Run build script (windows)"
+      shell: powershell
+      run: |
+        .\build-release.ps1 win-x64 ${{ steps.get_tag.outputs.TAG }}
+    - name: "Run build script (linux)"
+      shell: powershell
+      run: |
+        .\build-release.ps1 linux-x64 ${{ steps.get_tag.outputs.TAG }}
+    - name: "Create Release"
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_tag.outputs.TAG }}
+        release_name: Release ${{ steps.get_tag.outputs.TAG }}
+        draft: false
+        prerelease: false
+    - name: "Upload Release Asset (windows)"
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\Build\octomerge-win-x64-${{ steps.get_tag.outputs.TAG }}.zip
+        asset_name: octomerge-win-x64-${{ steps.get_tag.outputs.TAG }}.zip
+        asset_content_type: application/zip
+    - name: "Upload Release Asset (linux)"
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: .\Build\octomerge-linux-x64-${{ steps.get_tag.outputs.TAG }}.tgz
+        asset_name: octomerge-linux-x64-${{ steps.get_tag.outputs.TAG }}.tgz
+        asset_content_type: application/gzip
+
