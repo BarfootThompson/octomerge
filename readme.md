@@ -12,7 +12,7 @@ You need to specify the template to parse and the variable values to substitute 
 
 ## Templating Language
 
-Please refer to [Octopus Deploy templates](https://octopus.com/docs/deployment-process/variables/variable-substitution-syntax) documentation for the details.
+Please refer to [Octopus Deploy templates](https://octopus.com/docs/projects/variables/variable-substitutions) documentation for the details.
 
 ## Installation
 
