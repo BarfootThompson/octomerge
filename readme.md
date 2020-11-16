@@ -8,7 +8,7 @@ Initially I was working on some Octopus Deploy based CI/CD pipelines, and I real
 
 ## How?
 
-You need to specify the template to parse and the variable values to substitute in the form of a [toml](https://github.com/toml-lang/toml) file. You can parse all templates in a specified subfolder recursively. Your toml file can contain references to Vault secrets which will be fetched for you during merging. `octomerge` will use your Vault token from one of the two standard locations: either from `VAULT_TOKEN` environment variable, or from `~/.vault-token` file, which is created by `vault loging` command. You also need Vault address in `VAULT_ADDR` environment variable.
+You need to specify the template to parse and the variable values to substitute in the form of a [toml](https://github.com/toml-lang/toml) file. You can parse all templates in a specified subfolder recursively. Your toml file can contain references to Vault secrets which will be fetched for you during merging. `octomerge` will use your Vault token from one of the two standard locations: either from `VAULT_TOKEN` environment variable, or from `~/.vault-token` file, which is created by `vault login` command. You also need Vault address in `VAULT_ADDR` environment variable.
 
 ## Templating Language
 
