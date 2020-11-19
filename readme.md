@@ -262,6 +262,7 @@ In order to trigger a release via GitHub actions follow these steps:
 
 ## Changelog
 
+- 1.0.11 - Updated to .net 5 
 - 1.0.10 - Open-sourced, create GitHub actions build. Updated build scripts. Updated readme.
 - 1.0.9
   - Added additional toml file validation. Now `octomerge` will warn you if there are elements or types it does not understand. They used to be ignored before
