@@ -3,7 +3,7 @@ param ([string]$rid = "win-x64",[string]$tag)
 $ErrorActionPreference = "Stop"
 $global:ProgressPreference = "SilentlyContinue"
 
-$targetFramework = "netcoreapp3.1"
+$targetFramework = "net5.0"
 
 $targetFolder = Join-Path $PSScriptRoot "Build"
 $debugBin = Join-Path $PSScriptRoot "bin\Debug\$targetFramework"
