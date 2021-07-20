@@ -209,6 +209,15 @@ by the script.
 "smtpPassword" = "vault:secret/operational/mail:smtpPassword"
 ```
 
+If you are using Key-Value engine version 2, you have to indicate it by separating the engine mount point from the rest of the path by the "|" sign:
+
+```toml
+["conf-k8s\secrets\grafana\smtp-password"]
+"smtpPassword" = "vault:Production|operational/mail:smtpPassword"
+```
+
+In this example "Production" is the mount point of the v2 KV secret engine you would like to use.
+
 If `*` is used as the `secret_key` the entire secret in json format will be substituted.
 
 Note, that `octomerge` utility relies on you being logged into vault when it's performing the substitution. Run `vault login ` to login, or supply the token in the `VAULT_TOKEN` environment variable. It also relies on the value of `VAULT_ADDR` environment variable to point to your.
@@ -262,6 +271,7 @@ In order to trigger a release via GitHub actions follow these steps:
 
 ## Changelog
 
+- 1.0.12 - Added support for Vault version 2 kv engine, updated dependencies
 - 1.0.11 - Updated to .net 5 
 - 1.0.10 - Open-sourced, create GitHub actions build. Updated build scripts. Updated readme.
 - 1.0.9

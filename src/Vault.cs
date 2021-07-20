@@ -13,10 +13,23 @@ namespace OctoMerge
             string[] valueParts = value.Split(':');
             if (valueParts.Length != 3)
             {
-                Console.WriteLine($"Error: {key} in {file}. Value {value} is expected to have the following fomat: 'vault:path:key', for example: 'vault:secret/mysecret:mykey'");
+                Console.WriteLine($"Error: {key} in {file}. Value {value} is expected to have the following format: 'vault:path:key', for example: 'vault:secret/mysecret:mykey'");
                 Environment.Exit(1);
             }
             (string path, string vaultKey) = (valueParts[1], valueParts[2]);
+
+            string[] pathParts = path.Split('|');
+
+            if (pathParts.Length > 2)
+            {
+                Console.WriteLine($"Error: {key} in {file}. Path {path} is expected to have zero or one '|' characters");
+                Environment.Exit(1);
+            }
+
+            if (pathParts.Length == 2)
+            {
+                path = $"{pathParts[0]}/data/{pathParts[1]}";
+            }
 
             string vaultAddr = Environment.GetEnvironmentVariable("VAULT_ADDR");
 
@@ -42,7 +55,8 @@ namespace OctoMerge
                 Environment.Exit(1);
             }
 
-            JObject j = (JObject)JObject.Parse(response)["data"];
+            JObject j = (JObject)JObject.Parse(response)["data"]["metadata"] == null && (JObject)JObject.Parse(response)["data"]["data"] == null  
+                ? (JObject)JObject.Parse(response)["data"] : (JObject)JObject.Parse(response)["data"]["data"];
             if (vaultKey == "*")
             {
                 return j.ToString();
