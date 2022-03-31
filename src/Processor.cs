@@ -9,14 +9,19 @@ using Octostache.Templates;
 
 namespace OctoMerge
 {
-
     static class Processor
     {
+        class InputFile
+        {
+            public TomlTable Content;
+            public string FileName;
+        }
+
         public static Command Command;
 
         public static void Run()
         {
-            TomlTable vars = ReadToml();
+            TomlTable vars = MergeInput(ReadToml());
             CheckTypes(vars);
             if (Command.Multifile)
             {
@@ -28,11 +33,32 @@ namespace OctoMerge
             }
         }
 
-        private static TomlTable ReadToml()
+        private static TomlTable MergeInput(IList<InputFile> input)
+        {
+            TomlTable result = Toml.Create();
+            foreach (InputFile file in input)
+            {
+                foreach (var var in file.Content)
+                {
+                    result.Add(var.Key, var.Value);
+                }
+            }
+
+            return result;
+        }
+
+        private static IList<InputFile> ReadToml()
         {
             try
             {
-                return Toml.ReadFile(Command.VariableFile);
+                List<InputFile> result = new List<InputFile>();
+                foreach(string variableFile in Command.VariableFiles)
+                {
+                    string template = File.ReadAllText(variableFile);
+                    HashSet<string> templateVars = ParseTemplate(template, variableFile);
+                    result.Add(new InputFile {Content = Toml.ReadFile(variableFile), FileName = variableFile });
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -44,8 +70,6 @@ namespace OctoMerge
 
         private static void ProcessMultiple(TomlTable vars)
         {
-            Command.VariableFile = NormaliseFilepathAndSetCurrentDirectory(Command.VariableFile);
-
             foreach (var var in vars)
             {
                 if (var.Value.GetType() != typeof(TomlTable))
@@ -86,7 +110,7 @@ namespace OctoMerge
 
             if (Command.Verbose)
             {
-                LogVars(vars, Command.VariableFile, true);
+                LogVars(vars, null, true);
             }
 
             string template = File.ReadAllText(templateFile);

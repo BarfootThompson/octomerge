@@ -55,14 +55,14 @@ namespace OctoMerge
                 }
             }
 
-            if (@params.Length != 3 && !result.Multifile)
+            if (@params.Length < 3 && !result.Multifile)
             {
                 Console.WriteLine($"Error: Expecting 3 main parameters, got {@params.Length}");
                 Usage();
                 Environment.Exit(1);
             }
 
-            if (@params.Length != 1 && result.Multifile)
+            if (@params.Length < 1 && result.Multifile)
             {
                 Console.WriteLine($"Error: Expecting 1 main parameters, got {@params.Length}");
                 Usage();
@@ -76,20 +76,28 @@ namespace OctoMerge
                 Environment.Exit(1);
             }
 
-            result.VariableFile = @params[0];
-            if (@params.Length > 1)
+            if (result.Multifile)
             {
-                result.TemplateFile = @params[1];
-                result.ResultFile = @params[2];
+                result.VariableFiles = @params;
+            }
+            else
+            {
+                result.VariableFiles = @params.Take(@params.Length-2).ToArray();
+                result.TemplateFile = @params.Skip(@params.Length - 2).First();
+                result.ResultFile = @params.Skip(@params.Length - 1).First();
             }
 
-            if (!File.Exists(result.VariableFile))
+            foreach (string variableFile in result.VariableFiles)
             {
-                Console.WriteLine($"Error: File {result.VariableFile} does not exist");
-                Environment.Exit(1);
+                if (!File.Exists(variableFile))
+                {
+                    Console.WriteLine($"Error: File {variableFile} does not exist");
+                    Environment.Exit(1);
+                }
             }
-            
-            if (@params.Length > 1 && !File.Exists(result.TemplateFile))
+
+
+            if (!result.Multifile && !File.Exists(result.TemplateFile))
             {
                 Console.WriteLine($"Error: File {result.TemplateFile} does not exist");
                 Environment.Exit(1);
@@ -102,8 +110,8 @@ namespace OctoMerge
         {
             string version = typeof(CommandLineParser).Assembly.GetName().Version.ToString();
             Console.WriteLine($"OctoMerge v{version}");
-            Console.WriteLine("Usage: OctoMerge variables.toml template.txt result.txt [-q] [-p] [-s] [-v] [-d]");
-            Console.WriteLine("   Or: OctoMerge variables.toml -x [-q] [-g] [-p] [-s] [-v] [-d]");
+            Console.WriteLine("Usage: OctoMerge variables.toml [variables2.toml [variables3.toml ...]] template.txt result.txt [-q] [-p] [-s] [-v] [-d]");
+            Console.WriteLine("   Or: OctoMerge variables.toml [variables2.toml [variables3.toml ...]] -x [-q] [-g] [-p] [-s] [-v] [-d]");
             Console.WriteLine("  Merges Octopus variables from variables toml file into template and writes out the result file");
             Console.WriteLine("  -q - do not warn, when a variable from toml not used in the template (and the other way around, if -p is also specified)");
             Console.WriteLine("  -g - in multifile mode also warn if a global was not used in a template");

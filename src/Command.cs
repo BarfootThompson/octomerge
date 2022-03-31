@@ -2,7 +2,7 @@
 {
     class Command
     {
-        public string VariableFile { get; set; }
+        public string[] VariableFiles { get; set; }
         public string TemplateFile { get; set; }
         public string ResultFile { get; set; }
         public bool SuppressWarnings { get; set; }
