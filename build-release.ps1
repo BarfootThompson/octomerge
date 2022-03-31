@@ -3,7 +3,7 @@ param ([string]$rid = "win-x64",[string]$tag)
 $ErrorActionPreference = "Stop"
 $global:ProgressPreference = "SilentlyContinue"
 
-$targetFramework = "net5.0"
+$targetFramework = "net6.0"
 
 $targetFolder = Join-Path $PSScriptRoot "Build"
 $debugBin = Join-Path $PSScriptRoot "bin\Debug\$targetFramework"
@@ -20,7 +20,7 @@ $targetSelfContainedTgz = Join-Path $targetFolder "octomerge-$rid-$tag.tgz"
 
 mkdir $targetFolder -force | Out-Null
 
-dotnet publish -c Release -r $rid -p:PublishTrimmed=true -p:PublishSingleFile=true
+dotnet publish -c Release -r $rid --self-contained -p:PublishSingleFile=true
 Compress-Archive "$releasePublish/*" $targetSelfContainedZip -Force
 Push-Location
 cd $releasePublish

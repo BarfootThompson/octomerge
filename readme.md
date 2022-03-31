@@ -271,6 +271,7 @@ In order to trigger a release via GitHub actions follow these steps:
 
 ## Changelog
 
+- 1.0.13 - Updated Octostache and .net versions
 - 1.0.12 - Added support for Vault version 2 kv engine, updated dependencies
 - 1.0.11 - Updated to .net 5 
 - 1.0.10 - Open-sourced, create GitHub actions build. Updated build scripts. Updated readme.
