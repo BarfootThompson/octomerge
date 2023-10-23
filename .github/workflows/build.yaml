@@ -3,6 +3,7 @@ on:
   push:
     tags:
     - '*'
+  workflow_dispatch:
 jobs:
   windows:
     runs-on: windows-latest
